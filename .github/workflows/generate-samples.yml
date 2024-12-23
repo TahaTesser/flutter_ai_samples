@@ -27,7 +27,7 @@ jobs:
         
       - name: Create sample generator script
         run: |
-          cat > generate_sample.dart << 'EOF'
+          cat > generate_sample.dart << 'EOL'
           import 'dart:io';
           import 'package:http/http.dart' as http;
           import 'dart:convert';
@@ -97,7 +97,7 @@ jobs:
             );
             await pubspecFile.writeAsString(pubspecContent);
           }
-          EOF
+          EOL
 
       - name: Run sample generator
         run: dart generate_sample.dart
