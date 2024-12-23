@@ -26,6 +26,15 @@
       "model": null,
       "complexityLevel": null,
       "widgetName": "ConstellationAnimation"
+    },
+    {
+      "name": "spinning_donut_widget",
+      "title": "spinning_donut_widget",
+      "description": "An animated spinning donut widget",
+      "generatedAt": "2024-12-23T20:50:23.125053",
+      "model": null,
+      "complexityLevel": "intermediate",
+      "widgetName": "SpinningDonutWidget"
     }
   ]
 }
