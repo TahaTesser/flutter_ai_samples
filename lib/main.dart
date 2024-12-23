@@ -1,6 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'samples/creative_canvas.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,11 +23,41 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSamples();
+  }
+
+  Future<void> _loadSamples() async {
+    await Samples.loadSamples();
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     final sampleMetadata = Samples.getSampleMetadata();
     
     return Scaffold(
@@ -155,18 +186,29 @@ class SampleCard extends StatelessWidget {
 }
 
 class Samples {
-  static final List<dynamic> samples = [
-    CreativeCanvas(),
-    // Add more samples here
-  ];
-
-  static List<Map<String, String>> getSampleMetadata() {
-    return samples.map((sample) => {
-      'title': sample.runtimeType.toString(),
-      'description': sample.description.toString(),
-      'generatedAt': sample.generatedAt.toString(),
-      'model': sample.model.toString(),
-      'complexityLevel': sample.complexityLevel.toString(),
+  static final Map<String, Widget Function()> _sampleBuilders = {
+    // Add more samples here with their builder functions
+  };
+  
+  static List<Widget> get samples => _metadata
+      .map((meta) => _sampleBuilders[meta['name']]!())
+      .toList();
+  
+  static List<Map<String, dynamic>> _metadata = [];
+  
+  static Future<void> loadSamples() async {
+    final jsonString = await rootBundle.loadString('assets/data/samples.json');
+    final jsonData = json.decode(jsonString);
+    _metadata = List<Map<String, dynamic>>.from(jsonData['samples']);
+  }
+  
+  static List<Map<String, dynamic>> getSampleMetadata() {
+    return _metadata.map((sample) => {
+      'title': sample['title'],
+      'description': sample['description'],
+      'generatedAt': sample['generatedAt'],
+      'model': sample['model'],
+      'complexityLevel': sample['complexityLevel'],
     }).toList();
   }
 }

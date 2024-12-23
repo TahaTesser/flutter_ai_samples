@@ -1,5 +1,8 @@
+// ignore_for_file: unnecessary_string_escapes
+
 import 'dart:io';
 import 'package:yaml/yaml.dart';
+import 'dart:convert';
 
 // ignore_for_file: avoid_print
 
@@ -51,8 +54,9 @@ Future<bool> runCodeFixes() async {
   if (fixResult.exitCode != 0) {
     print('Dart fix encountered issues:\n${fixResult.stdout}\n${fixResult.stderr}');
     
-    // Reset and clean up
+    // Reset and clean up, but still run dart fix after
     await resetAndCleanup();
+    await Process.run('dart', ['fix', '--apply']);
     return false;
   }
 
@@ -61,14 +65,19 @@ Future<bool> runCodeFixes() async {
   if (analyzeResult.exitCode != 0) {
     final output = analyzeResult.stdout.toString();
     
-    // Check if there are any error level issues
-    final hasErrors = output.contains('error •') || output.contains('Error:');
+    // Check for any error level issues, including URI and undefined method errors
+    final hasErrors = output.contains('error •') || 
+                     output.contains('Error:') ||
+                     output.contains("URI doesn't exist") ||
+                     output.contains("isn't defined for the type") ||
+                     output.contains("argument_type_not_assignable");
     
     if (hasErrors) {
       print('Flutter analyze found fatal issues:\n${analyzeResult.stdout}\n${analyzeResult.stderr}');
       
-      // Reset and clean up
+      // Reset and clean up, but still run dart fix after
       await resetAndCleanup();
+      await Process.run('dart', ['fix', '--apply']);
       return false;
     } else {
       // If there are only warnings/info, print them but continue
@@ -88,18 +97,15 @@ Future<void> resetAndCleanup() async {
     print('Git reset failed:\n${resetResult.stderr}');
     return;
   }
-
-  print('\nCleaning up with dart fix...');
-  final cleanupResult = await Process.run('dart', ['fix', '--apply']);
-  if (cleanupResult.exitCode != 0) {
-    print('Cleanup dart fix encountered issues:\n${cleanupResult.stdout}\n${cleanupResult.stderr}');
-  }
 }
 
 Future<void> generateWithRetry(
   Map<String, dynamic> sample,
   Future<Map<String, dynamic>> Function() generateSample,
 ) async {
+  // Add current date to metadata
+  sample['metadata']['generated_at'] = DateTime.now().toIso8601String();
+  
   const maxRetries = 3;
   var attempts = 0;
   
@@ -122,7 +128,7 @@ Future<void> generateWithRetry(
       final metadataComment = '''
 // Generated on: ${metadata['generated_at']}
 // Model: ${metadata['model']}
-// Description: ${metadata['description']}
+// Description: ${metadata['description'].toString().replaceAll("'", "\'")}
 // Complexity level: ${metadata['complexity_level']}
 
 ''';
@@ -131,7 +137,7 @@ Future<void> generateWithRetry(
       final metadataProps = '''
   static final String generatedAt = '${metadata['generated_at']}';
   static final String model = '${metadata['model']}';
-  static final String description = '${metadata['description']}';
+  static final String description = '${metadata['description'].toString().replaceAll("'", "\'")}';
   static final String complexityLevel = '${metadata['complexity_level']}';
 ''';
 
@@ -161,6 +167,7 @@ Future<void> generateWithRetry(
           await backupFile.delete();
         }
         await incrementBuildNumber();
+        await updateSamplesJson(sample);
         return;
       }
 
@@ -199,6 +206,9 @@ Future<void> generateWithRetry(
 Future<void> generateWithoutRetry(
   Map<String, dynamic> sample,
 ) async {
+  // Add current date to metadata
+  sample['metadata']['generated_at'] = DateTime.now().toIso8601String();
+  
   // Create new sample file
   final sampleFile = File('lib/samples/${sample['name']}.dart');
   
@@ -207,7 +217,7 @@ Future<void> generateWithoutRetry(
   final metadataComment = '''
 // Generated on: ${metadata['generated_at']}
 // Model: ${metadata['model']}
-// Description: ${metadata['description']}
+// Description: ${metadata['description'].toString().replaceAll("'", "\'")}
 // Complexity level: ${metadata['complexity_level']}
 
 ''';
@@ -216,7 +226,7 @@ Future<void> generateWithoutRetry(
   final metadataProps = '''
   static final String generatedAt = '${metadata['generated_at']}';
   static final String model = '${metadata['model']}';
-  static final String description = '${metadata['description']}';
+  static final String description = '${metadata['description'].toString().replaceAll("'", "\'")}';
   static final String complexityLevel = '${metadata['complexity_level']}';
 ''';
 
@@ -240,4 +250,30 @@ Future<void> generateWithoutRetry(
   await updateMainDartFile(sample['name'], importLine);
   
   await incrementBuildNumber();
+  await updateSamplesJson(sample);
+}
+
+Future<void> updateSamplesJson(Map<String, dynamic> sample) async {
+  final jsonFile = File('assets/data/samples.json');
+  Map<String, dynamic> samplesData;
+  
+  if (await jsonFile.exists()) {
+    final jsonString = await jsonFile.readAsString();
+    samplesData = json.decode(jsonString);
+  } else {
+    samplesData = {'samples': []};
+    await jsonFile.create(recursive: true);
+  }
+
+  final samples = samplesData['samples'] as List;
+  samples.add({
+    'name': sample['name'],
+    'title': sample['metadata']['title'] ?? sample['name'],
+    'description': sample['metadata']['description'],
+    'generatedAt': sample['metadata']['generated_at'],
+    'model': sample['metadata']['model'],
+    'complexityLevel': sample['metadata']['complexity_level'],
+  });
+
+  await jsonFile.writeAsString(json.encode(samplesData));
 } 
