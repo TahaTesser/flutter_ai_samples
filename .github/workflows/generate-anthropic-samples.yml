@@ -5,7 +5,7 @@ on:
     # Runs at 00:00 UTC every day
     - cron: '0 0 * * *'
   workflow_dispatch:  # Allows manual trigger
-s
+
 jobs:
   generate-samples:
     runs-on: ubuntu-latest
@@ -32,6 +32,13 @@ jobs:
         
       - name: Update samples list
         run: dart scripts/update_samples_list.dart
+        
+      - name: Format JSON file
+        run: |
+          # Install jq for JSON formatting
+          sudo apt-get install -y jq
+          # Format the JSON file and save it back
+          jq '.' assets/data/samples.json > temp.json && mv temp.json assets/data/samples.json
         
       - name: Commit and push changes
         run: |
