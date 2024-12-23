@@ -3,6 +3,7 @@ import '../sample.dart';
 
 import '../samples/expandable_card_sample.dart';
 import '../samples/animated_icon_demo.dart';
+import '../samples/animated_multi_tile_list.dart';
 
 final samples = <Sample>[
   Sample(
@@ -22,5 +23,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: 'intermediate',
     widget: AnimatedIconDemo(),
+  ),
+  Sample(
+    name: 'animated_multi_tile_list',
+    title: 'animated_multi_tile_list',
+    description: 'An animated list tile that expands/collapses to show multi-line content',
+    generatedAt: '2024-12-23T21:36:49.481539',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: '',
+    widget: AnimatedMultiTileList(),
   ),
 ];

@@ -17,6 +17,15 @@
       "model": "claude-3-sonnet-20240229",
       "complexityLevel": "intermediate",
       "widgetName": "AnimatedIconDemo"
+    },
+    {
+      "name": "animated_multi_tile_list",
+      "title": "animated_multi_tile_list",
+      "description": "An animated list tile that expands/collapses to show multi-line content",
+      "generatedAt": "2024-12-23T21:36:49.481539",
+      "model": "claude-3-sonnet-20240229",
+      "complexityLevel": null,
+      "widgetName": "AnimatedMultiTileList"
     }
   ]
 }
