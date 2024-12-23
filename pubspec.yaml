@@ -1,5 +1,5 @@
-name: fsod
-description: "Flutter Sample of the Day - A collection of daily Flutter examples and code snippets for learning and reference."
+name: flutter_ai_samples
+description: "A dynamic collection of Flutter code samples and widgets generated with AI assistance. Features daily examples, practical implementations, and learning resources for Flutter developers of all levels."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+13
+version: 1.0.0+15
 
 environment:
   sdk: ^3.6.0

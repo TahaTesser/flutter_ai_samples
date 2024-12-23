@@ -37,18 +37,20 @@ Future<Map<String, dynamic>> generateSample(String apiKey) async {
         'messages': [
           {
             'role': 'user',
-            'content': '''Generate a creative, self-contained Flutter widget sample that works as a standalone page or mini-app.
-The widget name should be in snake_case format.
+            'content': '''Generate a unique and visually engaging Flutter widget that works as a standalone page or mini-app. The widget must be entirely self-contained (no external parameters or dependencies) and showcase at least one interactive or animated element.
 
 Requirements:
-1. Respond ONLY with a single valid JSON object - no additional text or explanations.
-2. The JSON must include "name", "code", and "metadata" fields.
-3. The "code" field should be a properly escaped string.
-4. Include ALL necessary imports at the top of the code.
-5. The code should be completely self-contained with no missing dependencies.
-6. Ensure all quotes and special characters are properly escaped.
-7. The widget should be self-contained and not require any parameters in its constructor.
-   Example: `const MySample({super.key});` instead of `const MySample({super.key, required this.text});`
+1. Respond ONLY with a single valid JSON object – no extra text, explanations, or code comments.
+2. The JSON must include exactly these keys: "name", "code", and "metadata".
+3. The "name" field should use snake_case for the widget’s class name (e.g., "my_cool_sample").
+4. The "code" field must:
+   - Contain a fully self-contained Flutter code snippet in a properly escaped string.
+   - Include ALL necessary imports (e.g., material.dart).
+   - Use a constructor with no required parameters (e.g., `const MyCoolSample({super.key});`).
+   - Feature at least one interactive or animated element.
+5. The "metadata" field can include any relevant details or categorization (e.g., "interactive", "animation"), but keep it concise.
+6. Ensure all quotes and special characters are properly escaped so the JSON is valid.
+7. Provide no additional commentary, instructions, or text outside of the single JSON object.
 
 Example response format (respond exactly like this format):
 {
