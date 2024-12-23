@@ -51,33 +51,49 @@ Future<bool> runCodeFixes() async {
   if (fixResult.exitCode != 0) {
     print('Dart fix encountered issues:\n${fixResult.stdout}\n${fixResult.stderr}');
     
-    // Reset to last commit when fixes fail
-    print('\nResetting to last commit...');
-    final resetResult = await Process.run('git', ['reset', '--hard']);
-    if (resetResult.exitCode != 0) {
-      print('Git reset failed:\n${resetResult.stderr}');
-    }
-    
+    // Reset and clean up
+    await resetAndCleanup();
     return false;
   }
 
   print('\nRunning Flutter analyze...');
   final analyzeResult = await Process.run('flutter', ['analyze']);
   if (analyzeResult.exitCode != 0) {
-    print('Flutter analyze found issues:\n${analyzeResult.stdout}\n${analyzeResult.stderr}');
+    final output = analyzeResult.stdout.toString();
     
-    // Reset to last commit when analysis fails
-    print('\nResetting to last commit...');
-    final resetResult = await Process.run('git', ['reset', '--hard']);
-    if (resetResult.exitCode != 0) {
-      print('Git reset failed:\n${resetResult.stderr}');
+    // Check if there are any error level issues
+    final hasErrors = output.contains('error •') || output.contains('Error:');
+    
+    if (hasErrors) {
+      print('Flutter analyze found fatal issues:\n${analyzeResult.stdout}\n${analyzeResult.stderr}');
+      
+      // Reset and clean up
+      await resetAndCleanup();
+      return false;
+    } else {
+      // If there are only warnings/info, print them but continue
+      print('Flutter analyze found non-fatal issues:\n${analyzeResult.stdout}');
+      return true;
     }
-    
-    return false;
   }
 
   print('Code fixes completed successfully!');
   return true;
+}
+
+Future<void> resetAndCleanup() async {
+  print('\nResetting to last commit...');
+  final resetResult = await Process.run('git', ['reset', '--hard']);
+  if (resetResult.exitCode != 0) {
+    print('Git reset failed:\n${resetResult.stderr}');
+    return;
+  }
+
+  print('\nCleaning up with dart fix...');
+  final cleanupResult = await Process.run('dart', ['fix', '--apply']);
+  if (cleanupResult.exitCode != 0) {
+    print('Cleanup dart fix encountered issues:\n${cleanupResult.stdout}\n${cleanupResult.stderr}');
+  }
 }
 
 Future<void> generateWithRetry(
