@@ -4,6 +4,7 @@ import '../sample.dart';
 import '../samples/random_color_box.dart';
 import '../samples/waveform_visualizer.dart';
 import '../samples/constellation_animation.dart';
+import '../samples/spinning_donut_widget.dart';
 
 final samples = <Sample>[
   Sample(
@@ -32,5 +33,14 @@ final samples = <Sample>[
     model: '',
     complexityLevel: '',
     widget: ConstellationAnimation(),
+  ),
+  Sample(
+    name: 'spinning_donut_widget',
+    title: 'spinning_donut_widget',
+    description: 'An animated spinning donut widget',
+    generatedAt: '2024-12-23T20:50:23.125053',
+    model: '',
+    complexityLevel: 'intermediate',
+    widget: SpinningDonutWidget(),
   ),
 ];
