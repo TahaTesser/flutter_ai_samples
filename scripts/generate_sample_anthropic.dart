@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'utils/sample_generator_utils.dart';
 
+// ignore_for_file: avoid_print
+
 void main() async {
   final apiKey = Platform.environment['ANTHROPIC_API_KEY'];
   if (apiKey == null || apiKey.trim().isEmpty) {

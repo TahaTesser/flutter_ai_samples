@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:yaml/yaml.dart';
 
+// ignore_for_file: avoid_print
+
 Future<void> updateMainDartFile(String sampleName, String importLine) async {
   final mainFile = File('lib/main.dart');
   var content = await mainFile.readAsString();
