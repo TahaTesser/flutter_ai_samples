@@ -1,4 +1,4 @@
-# Flutter Samples AI
+# Flutter AI Samples
 
 A collection of Flutter samples that are automatically generated using AI (Anthropic Claude and OpenAI). The samples are refreshed daily to showcase different Flutter implementations and patterns.
 
