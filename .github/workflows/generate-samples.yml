@@ -1,0 +1,112 @@
+name: Generate Samples
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # Runs every 10 minutes
+  workflow_dispatch:  # Allows manual triggering
+
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+jobs:
+  generate-samples:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT }}  # Personal access token with repo access
+          
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          
+      - name: Install dependencies
+        run: flutter pub get
+        
+      - name: Create sample generator script
+        run: |
+          cat > generate_sample.dart << 'EOF'
+          import 'dart:io';
+          import 'package:http/http.dart' as http;
+          import 'dart:convert';
+          import 'package:yaml/yaml.dart';
+          
+          void main() async {
+            final apiKey = Platform.environment['OPENAI_API_KEY'];
+            final response = await generateSample(apiKey!);
+            await updateFiles(response);
+          }
+          
+          Future<Map<String, dynamic>> generateSample(String apiKey) async {
+            final url = Uri.parse('https://api.openai.com/v1/chat/completions');
+            final response = await http.post(
+              url,
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer $apiKey',
+              },
+              body: jsonEncode({
+                'model': 'gpt-4-turbo-preview',
+                'messages': [
+                  {
+                    'role': 'user',
+                    'content': 'Generate a new Flutter widget sample with a creative name. Response format: {"name": "widget_name", "code": "// dart code here"}'
+                  }
+                ],
+              }),
+            );
+            
+            return jsonDecode(jsonDecode(response.body)['choices'][0]['message']['content']);
+          }
+          
+          Future<void> updateFiles(Map<String, dynamic> sample) async {
+            // Create new sample file
+            final sampleFile = File('lib/samples/${sample['name']}.dart');
+            await sampleFile.writeAsString(sample['code']);
+            
+            // Update main.dart
+            final mainFile = File('lib/main.dart');
+            var content = await mainFile.readAsString();
+            final importLine = "import 'samples/${sample['name']}.dart';";
+            final listEntry = "    ${sample['name']},";
+            
+            content = content.replaceFirst(
+              '// @generated - Do not modify',
+              '// @generated - Do not modify\n$importLine'
+            );
+            
+            content = content.replaceFirst(
+              '  static final samples = [',
+              '  static final samples = [\n$listEntry'
+            );
+            
+            await mainFile.writeAsString(content);
+            
+            // Increment version in pubspec.yaml
+            final pubspecFile = File('pubspec.yaml');
+            var pubspecContent = await pubspecFile.readAsString();
+            final yaml = loadYaml(pubspecContent);
+            final version = yaml['version'] as String;
+            final parts = version.split('+');
+            final buildNumber = int.parse(parts[1]) + 1;
+            pubspecContent = pubspecContent.replaceFirst(
+              version,
+              '${parts[0]}+$buildNumber'
+            );
+            await pubspecFile.writeAsString(pubspecContent);
+          }
+          EOF
+
+      - name: Run sample generator
+        run: dart generate_sample.dart
+        
+      - name: Commit changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "chore: Generate new sample [skip ci]"
+          git push
+</rewritten_file> 

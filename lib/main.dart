@@ -102,3 +102,9 @@ class SampleCard extends StatelessWidget {
     );
   }
 }
+
+class Samples {
+  static final samples = [
+    // Existing samples...
+  ];
+}
