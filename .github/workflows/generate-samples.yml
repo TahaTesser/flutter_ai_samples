@@ -102,11 +102,26 @@ jobs:
       - name: Run sample generator
         run: dart generate_sample.dart
         
-      - name: Commit changes
+      - name: Create Pull Request
+        id: create-pr
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GH_PAT }}
+          commit-message: "feat: Generate new sample"
+          title: "feat: Generate new sample"
+          body: |
+            🤖 This PR was automatically generated to add a new Flutter widget sample.
+            
+            ### Changes
+            - Added new widget sample
+            - Updated main.dart with new import and list entry
+            - Incremented build number
+          branch: feat/new-sample
+          delete-branch: true
+          
+      - name: Enable Pull Request Automerge
+        if: steps.create-pr.outputs.pull-request-number
         run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "chore: Generate new sample [skip ci]"
-          git push
-</rewritten_file> 
+          gh pr merge --auto --merge "${{ steps.create-pr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }} 
