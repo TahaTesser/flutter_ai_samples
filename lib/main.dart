@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 import 'samples.dart';
 
@@ -13,11 +14,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Sample of the Day',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: true,
+      title: 'Flutter AI Samples',
+      theme: FlexThemeData.light(
+        scheme: FlexScheme.brandBlue,
       ),
+      themeMode: ThemeMode.light,
       home: const HomePage(),
     );
   }
