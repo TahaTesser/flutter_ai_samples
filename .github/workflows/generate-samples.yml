@@ -5,6 +5,11 @@ on:
     - cron: '*/10 * * * *'  # Runs every 10 minutes
   workflow_dispatch:  # Allows manual triggering
 
+# Add permissions block
+permissions:
+  contents: write
+  pull-requests: write
+
 env:
   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
@@ -14,8 +19,6 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.GH_PAT }}  # Personal access token with repo access
           
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -106,7 +109,6 @@ jobs:
         id: create-pr
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GH_PAT }}
           commit-message: "feat: Generate new sample"
           title: "feat: Generate new sample"
           body: |
@@ -124,4 +126,4 @@ jobs:
         run: |
           gh pr merge --auto --merge "${{ steps.create-pr.outputs.pull-request-number }}"
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }} 
+          GH_TOKEN: ${{ github.token }}
