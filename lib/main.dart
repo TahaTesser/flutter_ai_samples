@@ -47,6 +47,26 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _showAboutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('About Flutter AI Samples'),
+        content: const Text(
+          'This app showcases various Flutter UI samples generated using AI. '
+          'Each sample demonstrates different Flutter widgets and patterns, '
+          'created with the help of AI models to inspire and educate developers.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -62,9 +82,16 @@ class _HomePageState extends State<HomePage> {
         slivers: [
           SliverAppBar.medium(
             title: const Text(
-              'Flutter Sample of the Day',
+              'Flutter AI Samples',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.info_outline),
+                onPressed: _showAboutDialog,
+                tooltip: 'About',
+              ),
+            ],
           ),
           SliverPadding(
             padding: const EdgeInsets.all(16),
@@ -75,7 +102,6 @@ class _HomePageState extends State<HomePage> {
                   return SampleCard(
                     title: sample.title,
                     description: sample.description,
-                    icon: Icons.code,
                     metadata: {
                       'Generated': sample.generatedAt,
                       'Model': sample.model,
@@ -106,7 +132,6 @@ class _HomePageState extends State<HomePage> {
 class SampleCard extends StatelessWidget {
   final String title;
   final String description;
-  final IconData icon;
   final Map<String, String> metadata;
   final VoidCallback onTap;
 
@@ -114,7 +139,6 @@ class SampleCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.description,
-    required this.icon,
     required this.metadata,
     required this.onTap,
   });
@@ -136,49 +160,43 @@ class SampleCard extends StatelessWidget {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, size: 40, color: Theme.of(context).primaryColor),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ListTile(
+            title: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  description,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: formattedMetadata.entries.map((entry) {
+                    return Chip(
+                      label: Text(
+                        '${entry.key}: ${entry.value}',
+                        style: const TextStyle(fontSize: 12),
                       ),
-                    ),
-                  ),
-                  const Icon(Icons.arrow_forward_ios),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                description,
-                style: const TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                children: formattedMetadata.entries.map((entry) {
-                  return Chip(
-                    label: Text(
-                      '${entry.key}: ${entry.value}',
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+            onTap: onTap,
           ),
-        ),
+        ],
       ),
     );
   }

@@ -5,6 +5,8 @@ import 'utils/sample_generator_utils.dart';
 
 // ignore_for_file: avoid_print
 
+const String model = 'claude-3-sonnet-20240229';
+
 void main() async {
   final apiKey = Platform.environment['ANTHROPIC_API_KEY'];
   if (apiKey == null || apiKey.trim().isEmpty) {
@@ -34,7 +36,7 @@ Future<Map<String, dynamic>> generateSample(String apiKey) async {
         'anthropic-version': '2023-06-01',
       },
       body: jsonEncode({
-        'model': 'claude-3-sonnet-20240229',
+        'model': model,
         'max_tokens': 4000,
         'messages': [
           {
@@ -61,7 +63,7 @@ Example response format (respond exactly like this format):
   "metadata": {
     "description": "A brief description",
     "generated_at": "$today",
-    "model": "claude-3-sonnet-20240229",
+    "model": "$model",
     "complexity_level": "beginner"
   }
 }'''
