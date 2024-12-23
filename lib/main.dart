@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter AI Samples',
       theme: FlexThemeData.light(
         scheme: FlexScheme.brandBlue,
