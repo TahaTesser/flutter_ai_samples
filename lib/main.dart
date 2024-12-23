@@ -147,17 +147,17 @@ class SampleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final formattedMetadata = metadata.map((key, value) {
-      if (key == 'Generated') {
-        try {
-          final timestamp = DateTime.parse(value);
-          return MapEntry(key, DateFormat('MMM d, y').format(timestamp));
-        } catch (e) {
-          return MapEntry(key, value);
-        }
-      }
-      return MapEntry(key, value);
-    });
+    // final formattedMetadata = metadata.map((key, value) {
+    //   if (key == 'Generated') {
+    //     try {
+    //       final timestamp = DateTime.parse(value);
+    //       return MapEntry(key, DateFormat('MMM d, y').format(timestamp));
+    //     } catch (e) {
+    //       return MapEntry(key, value);
+    //     }
+    //   }
+    //   return MapEntry(key, value);
+    // });
 
     return Card(
       elevation: 2,
