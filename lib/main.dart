@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'samples/color_palette_generator.dart';
+import 'package:intl/intl.dart';
+import 'samples/creative_canvas.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,6 +27,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sampleMetadata = Samples.getSampleMetadata();
+    
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -38,23 +41,30 @@ class HomePage extends StatelessWidget {
           SliverPadding(
             padding: const EdgeInsets.all(16),
             sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                SampleCard(
-                  title: 'Interactive Color Palette Generator',
-                  description:
-                      'Create beautiful color palettes with drag and drop functionality',
-                  icon: Icons.color_lens,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ColorPaletteGenerator(),
-                      ),
-                    );
-                  },
-                ),
-                // Add more sample cards here
-              ]),
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  final metadata = sampleMetadata[index];
+                  return SampleCard(
+                    title: metadata['title']!,
+                    description: metadata['description']!,
+                    icon: Icons.code,
+                    metadata: {
+                      'Generated': metadata['generatedAt']!,
+                      'Model': metadata['model']!,
+                      'Complexity': metadata['complexityLevel']!,
+                    },
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Samples.samples[index],
+                        ),
+                      );
+                    },
+                  );
+                },
+                childCount: sampleMetadata.length,
+              ),
             ),
           ),
         ],
@@ -67,6 +77,7 @@ class SampleCard extends StatelessWidget {
   final String title;
   final String description;
   final IconData icon;
+  final Map<String, String> metadata;
   final VoidCallback onTap;
 
   const SampleCard({
@@ -74,37 +85,88 @@ class SampleCard extends StatelessWidget {
     required this.title,
     required this.description,
     required this.icon,
+    required this.metadata,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final formattedMetadata = metadata.map((key, value) {
+      if (key == 'Generated') {
+        try {
+          final timestamp = DateTime.parse(value);
+          return MapEntry(key, DateFormat('MMM d, y').format(timestamp));
+        } catch (e) {
+          return MapEntry(key, value);
+        }
+      }
+      return MapEntry(key, value);
+    });
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-      child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
-        leading: Icon(icon, size: 40, color: Theme.of(context).primaryColor),
-        title: Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: 40, color: Theme.of(context).primaryColor),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: const TextStyle(fontSize: 14),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                children: formattedMetadata.entries.map((entry) {
+                  return Chip(
+                    label: Text(
+                      '${entry.key}: ${entry.value}',
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
         ),
-        subtitle: Text(
-          description,
-          style: const TextStyle(fontSize: 14),
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios),
-        onTap: onTap,
       ),
     );
   }
 }
 
 class Samples {
-  static final samples = [
-    // Existing samples...
+  static final List<dynamic> samples = [
+    CreativeCanvas(),
+    // Add more samples here
   ];
+
+  static List<Map<String, String>> getSampleMetadata() {
+    return samples.map((sample) => {
+      'title': sample.runtimeType.toString(),
+      'description': sample.description.toString(),
+      'generatedAt': sample.generatedAt.toString(),
+      'model': sample.model.toString(),
+      'complexityLevel': sample.complexityLevel.toString(),
+    }).toList();
+  }
 }

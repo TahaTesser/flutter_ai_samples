@@ -23,6 +23,7 @@ void main() async {
 
 Future<Map<String, dynamic>> generateSample(String apiKey) async {
   final url = Uri.parse('https://api.anthropic.com/v1/messages');
+  final today = DateTime.now().toIso8601String().split('T')[0];
   
   try {
     final response = await http.post(
@@ -43,17 +44,20 @@ Generate a creative, self-contained Flutter widget sample that works as a standa
 The widget name should be in snake_case format.
 
 Requirements:
-1. Respond only with valid JSON.
-2. The JSON must include "name", "code", and "metadata".
-3. Ensure proper escaping of special characters.
+1. Respond ONLY with a single valid JSON object - no additional text or explanations.
+2. The JSON must include "name", "code", and "metadata" fields.
+3. The "code" field should be a properly escaped string.
+4. Include ALL necessary imports at the top of the code.
+5. The code should be completely self-contained with no missing dependencies.
+6. Ensure all quotes and special characters are properly escaped.
 
-Example response format:
+Example response format (respond exactly like this format):
 {
   "name": "widget_name",
-  "code": "// dart code here",
+  "code": "import 'package:flutter/material.dart';\\n\\n// Rest of the dart code here",
   "metadata": {
     "description": "A brief description",
-    "generated_at": "YYYY-MM-DD",
+    "generated_at": "$today",
     "model": "claude-3-sonnet-20240229",
     "key_features": ["feature1", "feature2"],
     "complexity_level": "beginner"
@@ -71,7 +75,7 @@ Example response format:
     }
     
     final responseBody = jsonDecode(response.body);
-    if (responseBody['content'] == null) {
+    if (responseBody['content'] == null || responseBody['content'].isEmpty) {
       throw 'Invalid API response format: No content found';
     }
     
@@ -83,10 +87,25 @@ Example response format:
     }
     
     try {
-      final parsed = jsonDecode(content);
+      // Try to find JSON content within the response
+      final jsonMatch = RegExp(r'\{[\s\S]*\}').firstMatch(content);
+      if (jsonMatch == null) {
+        throw 'No JSON object found in the response';
+      }
+      
+      final jsonStr = jsonMatch.group(0);
+      final parsed = jsonDecode(jsonStr!);
+      
+      // Validate required fields
+      if (!parsed.containsKey('name') || !parsed.containsKey('code') || !parsed.containsKey('metadata')) {
+        throw 'Missing required fields in JSON response';
+      }
+      
+      // Add generated_at if missing
       if (parsed['metadata'] != null && parsed['metadata']['generated_at'] == null) {
         parsed['metadata']['generated_at'] = DateTime.now().toIso8601String().split('T')[0];
       }
+      
       return parsed;
     } catch (e) {
       print('Error parsing JSON. Raw response content: $content');
@@ -98,5 +117,5 @@ Example response format:
 }
 
 Future<void> updateFiles(Map<String, dynamic> sample, String apiKey) async {
-  await generateWithRetry(sample, () => generateSample(apiKey));
+  await generateWithoutRetry(sample);
 }

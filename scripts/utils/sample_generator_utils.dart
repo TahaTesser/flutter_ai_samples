@@ -107,7 +107,6 @@ Future<void> generateWithRetry(
 // Generated on: ${metadata['generated_at']}
 // Model: ${metadata['model']}
 // Description: ${metadata['description']}
-// Key features: ${metadata['key_features'].join(', ')}
 // Complexity level: ${metadata['complexity_level']}
 
 ''';
@@ -117,7 +116,6 @@ Future<void> generateWithRetry(
   static final String generatedAt = '${metadata['generated_at']}';
   static final String model = '${metadata['model']}';
   static final String description = '${metadata['description']}';
-  static final List<String> keyFeatures = ${metadata['key_features']};
   static final String complexityLevel = '${metadata['complexity_level']}';
 ''';
 
@@ -180,4 +178,50 @@ Future<void> generateWithRetry(
   }
 
   throw 'Failed to generate valid sample after $maxRetries attempts';
+}
+
+Future<void> generateWithoutRetry(
+  Map<String, dynamic> sample,
+) async {
+  // Create new sample file
+  final sampleFile = File('lib/samples/${sample['name']}.dart');
+  
+  // Write the new sample
+  final metadata = sample['metadata'];
+  final metadataComment = '''
+// Generated on: ${metadata['generated_at']}
+// Model: ${metadata['model']}
+// Description: ${metadata['description']}
+// Complexity level: ${metadata['complexity_level']}
+
+''';
+
+  // Add static metadata properties to the widget class
+  final metadataProps = '''
+  static final String generatedAt = '${metadata['generated_at']}';
+  static final String model = '${metadata['model']}';
+  static final String description = '${metadata['description']}';
+  static final String complexityLevel = '${metadata['complexity_level']}';
+''';
+
+  // Insert the metadata properties after the class declaration
+  final code = sample['code'];
+  final classMatch = RegExp(r'class\s+\w+\s+extends\s+StatefulWidget\s*{').firstMatch(code);
+  if (classMatch == null) {
+    throw 'Could not find widget class declaration';
+  }
+
+  final modifiedCode = code.replaceRange(
+    classMatch.end,
+    classMatch.end,
+    '\n$metadataProps\n'
+  );
+
+  await sampleFile.writeAsString(metadataComment + modifiedCode);
+
+  // Update main.dart with the new sample
+  final importLine = "import 'samples/${sample['name']}.dart';";
+  await updateMainDartFile(sample['name'], importLine);
+  
+  await incrementBuildNumber();
 } 
