@@ -3,6 +3,7 @@ import '../sample.dart';
 
 import '../samples/random_color_box.dart';
 import '../samples/waveform_visualizer.dart';
+import '../samples/constellation_animation.dart';
 
 final samples = <Sample>[
   Sample(
@@ -22,5 +23,14 @@ final samples = <Sample>[
     model: 'claude-v1',
     complexityLevel: '',
     widget: WaveformVisualizer(),
+  ),
+  Sample(
+    name: 'constellation_animation',
+    title: 'constellation_animation',
+    description: 'An animated constellation of stars orbiting around a central point',
+    generatedAt: '2024-12-23T20:43:06.766614',
+    model: '',
+    complexityLevel: '',
+    widget: ConstellationAnimation(),
   ),
 ];

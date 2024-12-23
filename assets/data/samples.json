@@ -1,22 +1,31 @@
 {
-    "samples": [
-        {
-            "name": "random_color_box",
-            "title": "random_color_box",
-            "description": "A simple Flutter widget that generates a random color when tapped.",
-            "generatedAt": "2024-12-23T22:06:25.126215",
-            "model": "claude-v1",
-            "complexityLevel": "beginner",
-            "widgetName": "RandomColorBox"
-        },
-        {
-            "name": "waveform_visualizer",
-            "title": "waveform_visualizer",
-            "description": "An animated waveform visualizer widget with a scrolling wave effect.",
-            "generatedAt": "2024-12-23T22:13:48.551328",
-            "model": "claude-v1",
-            "complexityLevel": null,
-            "widgetName": "WaveformVisualizer"
-        }
-    ]
+  "samples": [
+    {
+      "name": "random_color_box",
+      "title": "random_color_box",
+      "description": "A simple Flutter widget that generates a random color when tapped.",
+      "generatedAt": "2024-12-23T22:06:25.126215",
+      "model": "claude-v1",
+      "complexityLevel": "beginner",
+      "widgetName": "RandomColorBox"
+    },
+    {
+      "name": "waveform_visualizer",
+      "title": "waveform_visualizer",
+      "description": "An animated waveform visualizer widget with a scrolling wave effect.",
+      "generatedAt": "2024-12-23T22:13:48.551328",
+      "model": "claude-v1",
+      "complexityLevel": null,
+      "widgetName": "WaveformVisualizer"
+    },
+    {
+      "name": "constellation_animation",
+      "title": "constellation_animation",
+      "description": "An animated constellation of stars orbiting around a central point",
+      "generatedAt": "2024-12-23T20:43:06.766614",
+      "model": null,
+      "complexityLevel": null,
+      "widgetName": "ConstellationAnimation"
+    }
+  ]
 }
