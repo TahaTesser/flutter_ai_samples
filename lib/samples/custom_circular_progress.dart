@@ -15,7 +15,7 @@ class CustomCircularProgress extends StatefulWidget {
 
   final double value;
 
-  const CustomCircularProgress({Key? key, required this.value}) : super(key: key);
+  const CustomCircularProgress({super.key, required this.value});
 
   @override
   _CustomCircularProgressState createState() => _CustomCircularProgressState();

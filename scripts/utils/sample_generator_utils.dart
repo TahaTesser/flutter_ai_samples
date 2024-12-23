@@ -1,40 +1,6 @@
-// ignore_for_file: unnecessary_string_escapes
-
 import 'dart:io';
 import 'package:yaml/yaml.dart';
 import 'dart:convert';
-
-// ignore_for_file: avoid_print
-
-Future<void> updateMainDartFile(String sampleName, String importLine) async {
-  final mainFile = File('lib/main.dart');
-  var content = await mainFile.readAsString();
-
-  // Find the last import statement
-  final importRegex = RegExp(r'^import.*$', multiLine: true);
-  final matches = importRegex.allMatches(content).toList();
-  if (matches.isEmpty) {
-    throw 'No import statements found in main.dart';
-  }
-  final lastImport = matches.last;
-
-  // Insert new import after the last import
-  content = content.replaceRange(lastImport.end, lastImport.end, '\n$importLine');
-
-  // Capitalize the first letter of each word in the widget name
-  final widgetName = sampleName
-      .split('_')
-      .map((word) => word[0].toUpperCase() + word.substring(1))
-      .join('');
-
-  final listEntry = "    $widgetName(),";
-
-  // Add the widget to the samples list
-  content = content.replaceFirst(
-      '  static final samples = [', '  static final samples = [\n$listEntry');
-
-  await mainFile.writeAsString(content);
-}
 
 Future<void> incrementBuildNumber() async {
   final pubspecFile = File('pubspec.yaml');
@@ -53,8 +19,6 @@ Future<bool> runCodeFixes() async {
   final fixResult = await Process.run('dart', ['fix', '--apply']);
   if (fixResult.exitCode != 0) {
     print('Dart fix encountered issues:\n${fixResult.stdout}\n${fixResult.stderr}');
-    
-    // Reset and clean up, but still run dart fix after
     await resetAndCleanup();
     await Process.run('dart', ['fix', '--apply']);
     return false;
@@ -64,23 +28,14 @@ Future<bool> runCodeFixes() async {
   final analyzeResult = await Process.run('flutter', ['analyze']);
   if (analyzeResult.exitCode != 0) {
     final output = analyzeResult.stdout.toString();
-    
-    // Check for any error level issues, including URI and undefined method errors
-    final hasErrors = output.contains('error •') || 
-                     output.contains('Error:') ||
-                     output.contains("URI doesn't exist") ||
-                     output.contains("isn't defined for the type") ||
-                     output.contains("argument_type_not_assignable");
+    final hasErrors = _checkForFatalErrors(output);
     
     if (hasErrors) {
       print('Flutter analyze found fatal issues:\n${analyzeResult.stdout}\n${analyzeResult.stderr}');
-      
-      // Reset and clean up, but still run dart fix after
       await resetAndCleanup();
       await Process.run('dart', ['fix', '--apply']);
       return false;
     } else {
-      // If there are only warnings/info, print them but continue
       print('Flutter analyze found non-fatal issues:\n${analyzeResult.stdout}');
       return true;
     }
@@ -88,6 +43,17 @@ Future<bool> runCodeFixes() async {
 
   print('Code fixes completed successfully!');
   return true;
+}
+
+bool _checkForFatalErrors(String output) {
+  final fatalErrors = [
+    'error •',
+    'Error:',
+    "URI doesn't exist",
+    "isn't defined for the type",
+    "argument_type_not_assignable"
+  ];
+  return fatalErrors.any((error) => output.contains(error));
 }
 
 Future<void> resetAndCleanup() async {
@@ -103,7 +69,6 @@ Future<void> generateWithRetry(
   Map<String, dynamic> sample,
   Future<Map<String, dynamic>> Function() generateSample,
 ) async {
-  // Add current date to metadata
   sample['metadata']['generated_at'] = DateTime.now().toIso8601String();
   
   const maxRetries = 3;
@@ -113,87 +78,31 @@ Future<void> generateWithRetry(
     attempts++;
     print('\nAttempt $attempts of $maxRetries');
     
-    // Create new sample file
     final sampleFile = File('lib/samples/${sample['name']}.dart');
     final backupFile = File('lib/samples/${sample['name']}.dart.bak');
     
-    // Backup existing file if it exists
     if (await sampleFile.exists()) {
       await sampleFile.copy(backupFile.path);
     }
 
     try {
-      // Write the new sample
-      final metadata = sample['metadata'];
-      final metadataComment = '''
-// Generated on: ${metadata['generated_at']}
-// Model: ${metadata['model']}
-// Description: ${metadata['description'].toString().replaceAll("'", "\'")}
-// Complexity level: ${metadata['complexity_level']}
+      await _writeSampleFile(sampleFile, sample);
 
-''';
-
-      // Add static metadata properties to the widget class
-      final metadataProps = '''
-  static final String generatedAt = '${metadata['generated_at']}';
-  static final String model = '${metadata['model']}';
-  static final String description = '${metadata['description'].toString().replaceAll("'", "\'")}';
-  static final String complexityLevel = '${metadata['complexity_level']}';
-''';
-
-      // Insert the metadata properties after the class declaration
-      final code = sample['code'];
-      final classMatch = RegExp(r'class\s+\w+\s+extends\s+StatefulWidget\s*{').firstMatch(code);
-      if (classMatch == null) {
-        throw 'Could not find widget class declaration';
-      }
-
-      final modifiedCode = code.replaceRange(
-        classMatch.end,
-        classMatch.end,
-        '\n$metadataProps\n'
-      );
-
-      await sampleFile.writeAsString(metadataComment + modifiedCode);
-
-      // Update main.dart with the new sample
-      final importLine = "import 'samples/${sample['name']}.dart';";
-      await updateMainDartFile(sample['name'], importLine);
-
-      // Run code fixes and analyze
       if (await runCodeFixes()) {
-        // Success! Clean up backup and increment version
-        if (await backupFile.exists()) {
-          await backupFile.delete();
-        }
-        await incrementBuildNumber();
-        await updateSamplesJson(sample);
+        await _cleanupAndFinalize(backupFile, sample);
         return;
       }
 
-      // If we get here, analysis failed
       print('\nAnalysis failed. Reverting changes...');
-      
-      // Restore from backup if it exists
-      if (await backupFile.exists()) {
-        await backupFile.copy(sampleFile.path);
-        await backupFile.delete();
-      } else {
-        await sampleFile.delete();
-      }
+      await _revertChanges(sampleFile, backupFile);
 
-      // If this wasn't our last attempt, generate a new sample
       if (attempts < maxRetries) {
         sample = await generateSample();
       }
 
     } catch (e) {
       print('Error during attempt $attempts: $e');
-      // Clean up on error
-      if (await backupFile.exists()) {
-        await backupFile.copy(sampleFile.path);
-        await backupFile.delete();
-      }
+      await _revertChanges(sampleFile, backupFile);
       if (attempts >= maxRetries) {
         rethrow;
       }
@@ -203,34 +112,21 @@ Future<void> generateWithRetry(
   throw 'Failed to generate valid sample after $maxRetries attempts';
 }
 
-Future<void> generateWithoutRetry(
-  Map<String, dynamic> sample,
-) async {
-  // Add current date to metadata
+Future<void> generateWithoutRetry(Map<String, dynamic> sample) async {
   sample['metadata']['generated_at'] = DateTime.now().toIso8601String();
   
-  // Create new sample file
   final sampleFile = File('lib/samples/${sample['name']}.dart');
+  await _writeSampleFile(sampleFile, sample);
   
-  // Write the new sample
+  await incrementBuildNumber();
+  await updateSamplesJson(sample);
+}
+
+Future<void> _writeSampleFile(File sampleFile, Map<String, dynamic> sample) async {
   final metadata = sample['metadata'];
-  final metadataComment = '''
-// Generated on: ${metadata['generated_at']}
-// Model: ${metadata['model']}
-// Description: ${metadata['description'].toString().replaceAll("'", "\'")}
-// Complexity level: ${metadata['complexity_level']}
+  final metadataComment = _generateMetadataComment(metadata);
+  final metadataProps = _generateMetadataProperties(metadata);
 
-''';
-
-  // Add static metadata properties to the widget class
-  final metadataProps = '''
-  static final String generatedAt = '${metadata['generated_at']}';
-  static final String model = '${metadata['model']}';
-  static final String description = '${metadata['description'].toString().replaceAll("'", "\'")}';
-  static final String complexityLevel = '${metadata['complexity_level']}';
-''';
-
-  // Insert the metadata properties after the class declaration
   final code = sample['code'];
   final classMatch = RegExp(r'class\s+\w+\s+extends\s+StatefulWidget\s*{').firstMatch(code);
   if (classMatch == null) {
@@ -244,13 +140,42 @@ Future<void> generateWithoutRetry(
   );
 
   await sampleFile.writeAsString(metadataComment + modifiedCode);
+}
 
-  // Update main.dart with the new sample
-  final importLine = "import 'samples/${sample['name']}.dart';";
-  await updateMainDartFile(sample['name'], importLine);
-  
+String _generateMetadataComment(Map<String, dynamic> metadata) {
+  return '''
+// Generated on: ${metadata['generated_at']}
+// Model: ${metadata['model']}
+// Description: ${metadata['description'].toString().replaceAll("'", "'")}
+// Complexity level: ${metadata['complexity_level']}
+
+''';
+}
+
+String _generateMetadataProperties(Map<String, dynamic> metadata) {
+  return '''
+  static final String generatedAt = '${metadata['generated_at']}';
+  static final String model = '${metadata['model']}';
+  static final String description = '${metadata['description'].toString().replaceAll("'", "'")}';
+  static final String complexityLevel = '${metadata['complexity_level']}';
+''';
+}
+
+Future<void> _cleanupAndFinalize(File backupFile, Map<String, dynamic> sample) async {
+  if (await backupFile.exists()) {
+    await backupFile.delete();
+  }
   await incrementBuildNumber();
   await updateSamplesJson(sample);
+}
+
+Future<void> _revertChanges(File sampleFile, File backupFile) async {
+  if (await backupFile.exists()) {
+    await backupFile.copy(sampleFile.path);
+    await backupFile.delete();
+  } else {
+    await sampleFile.delete();
+  }
 }
 
 Future<void> updateSamplesJson(Map<String, dynamic> sample) async {
@@ -266,14 +191,26 @@ Future<void> updateSamplesJson(Map<String, dynamic> sample) async {
   }
 
   final samples = samplesData['samples'] as List;
-  samples.add({
+  final sampleData = _createSampleData(sample);
+  
+  final existingIndex = samples.indexWhere((s) => s['name'] == sample['name']);
+  if (existingIndex != -1) {
+    samples[existingIndex] = sampleData;
+  } else {
+    samples.add(sampleData);
+  }
+
+  await jsonFile.writeAsString(json.encode(samplesData));
+}
+
+Map<String, dynamic> _createSampleData(Map<String, dynamic> sample) {
+  return {
     'name': sample['name'],
     'title': sample['metadata']['title'] ?? sample['name'],
     'description': sample['metadata']['description'],
     'generatedAt': sample['metadata']['generated_at'],
     'model': sample['metadata']['model'],
     'complexityLevel': sample['metadata']['complexity_level'],
-  });
-
-  await jsonFile.writeAsString(json.encode(samplesData));
-} 
+    'widgetName': sample['metadata']['widget_name'],
+  };
+}

@@ -12,7 +12,7 @@ class ColorPalettePicker extends StatefulWidget {
   static final String complexityLevel = 'intermediate';
 
 
-  const ColorPalettePicker({Key? key}) : super(key: key);
+  const ColorPalettePicker({super.key});
 
   @override
   _ColorPalettePickerState createState() => _ColorPalettePickerState();
