@@ -1,7 +1,7 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+
+import 'samples.dart';
 
 void main() {
   runApp(const MyApp());
@@ -40,7 +40,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadSamples() async {
-    await Samples.loadSamples();
     if (mounted) {
       setState(() {
         _isLoading = false;
@@ -58,8 +57,6 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    final sampleMetadata = Samples.getSampleMetadata();
-    
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -74,27 +71,29 @@ class _HomePageState extends State<HomePage> {
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) {
-                  final metadata = sampleMetadata[index];
+                  final sample = samples[index];
                   return SampleCard(
-                    title: metadata['title']!,
-                    description: metadata['description']!,
+                    title: sample.title,
+                    description: sample.description,
                     icon: Icons.code,
                     metadata: {
-                      'Generated': metadata['generatedAt']!,
-                      'Model': metadata['model']!,
-                      'Complexity': metadata['complexityLevel']!,
+                      'Generated': sample.generatedAt,
+                      'Model': sample.model,
+                      'Complexity': sample.complexityLevel,
                     },
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Samples.samples[index],
+                          builder: (context) => Material(
+                            child: sample.widget,
+                          ),
                         ),
                       );
                     },
                   );
                 },
-                childCount: sampleMetadata.length,
+                childCount: samples.length,
               ),
             ),
           ),
@@ -182,33 +181,5 @@ class SampleCard extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class Samples {
-  static final Map<String, Widget Function()> _sampleBuilders = {
-    // Add more samples here with their builder functions
-  };
-  
-  static List<Widget> get samples => _metadata
-      .map((meta) => _sampleBuilders[meta['name']]!())
-      .toList();
-  
-  static List<Map<String, dynamic>> _metadata = [];
-  
-  static Future<void> loadSamples() async {
-    final jsonString = await rootBundle.loadString('assets/data/samples.json');
-    final jsonData = json.decode(jsonString);
-    _metadata = List<Map<String, dynamic>>.from(jsonData['samples']);
-  }
-  
-  static List<Map<String, dynamic>> getSampleMetadata() {
-    return _metadata.map((sample) => {
-      'title': sample['title'],
-      'description': sample['description'],
-      'generatedAt': sample['generatedAt'],
-      'model': sample['model'],
-      'complexityLevel': sample['complexityLevel'],
-    }).toList();
   }
 }
