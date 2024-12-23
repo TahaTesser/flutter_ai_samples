@@ -173,27 +173,9 @@ class SampleCard extends StatelessWidget {
               ),
             ),
             trailing: const Icon(Icons.arrow_forward_ios),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  description,
-                  style: const TextStyle(fontSize: 14),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: formattedMetadata.entries.map((entry) {
-                    return Chip(
-                      label: Text(
-                        '${entry.key}: ${entry.value}',
-                        style: const TextStyle(fontSize: 12),
-                      ),
-                    );
-                  }).toList(),
-                ),
-              ],
+            subtitle: Text(
+              description,
+              style: const TextStyle(fontSize: 14),
             ),
             onTap: onTap,
           ),
