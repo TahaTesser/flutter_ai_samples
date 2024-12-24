@@ -26,6 +26,15 @@
       "model": "claude-3-sonnet-20240229",
       "complexityLevel": null,
       "widgetName": "AnimatedMultiTileList"
+    },
+    {
+      "name": "interactive_image_fade",
+      "title": "interactive_image_fade",
+      "description": "An interactive and animated image widget that fades on mouse hover",
+      "generatedAt": "2024-12-24T00:05:30.936747",
+      "model": "claude-v1.3",
+      "complexityLevel": "intermediate",
+      "widgetName": "InteractiveImageFade"
     }
   ]
 }

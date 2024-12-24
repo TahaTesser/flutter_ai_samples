@@ -4,6 +4,7 @@ import '../sample.dart';
 import '../samples/expandable_card_sample.dart';
 import '../samples/animated_icon_demo.dart';
 import '../samples/animated_multi_tile_list.dart';
+import '../samples/interactive_image_fade.dart';
 
 final samples = <Sample>[
   Sample(
@@ -32,5 +33,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: '',
     widget: AnimatedMultiTileList(),
+  ),
+  Sample(
+    name: 'interactive_image_fade',
+    title: 'interactive_image_fade',
+    description: 'An interactive and animated image widget that fades on mouse hover',
+    generatedAt: '2024-12-24T00:05:30.936747',
+    model: 'claude-v1.3',
+    complexityLevel: 'intermediate',
+    widget: InteractiveImageFade(),
   ),
 ];
