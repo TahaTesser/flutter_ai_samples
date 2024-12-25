@@ -35,6 +35,15 @@
       "model": "claude-v1.3",
       "complexityLevel": "intermediate",
       "widgetName": "InteractiveImageFade"
+    },
+    {
+      "name": "sliding_card_carousel",
+      "title": "sliding_card_carousel",
+      "description": "A sliding card carousel with interactive pagination via PageView and Slider",
+      "generatedAt": "2024-12-25T00:05:19.547356",
+      "model": null,
+      "complexityLevel": "intermediate",
+      "widgetName": "SlidingCardCarousel"
     }
   ]
 }

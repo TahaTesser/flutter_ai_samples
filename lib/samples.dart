@@ -5,6 +5,7 @@ import '../samples/expandable_card_sample.dart';
 import '../samples/animated_icon_demo.dart';
 import '../samples/animated_multi_tile_list.dart';
 import '../samples/interactive_image_fade.dart';
+import '../samples/sliding_card_carousel.dart';
 
 final samples = <Sample>[
   Sample(
@@ -42,5 +43,14 @@ final samples = <Sample>[
     model: 'claude-v1.3',
     complexityLevel: 'intermediate',
     widget: InteractiveImageFade(),
+  ),
+  Sample(
+    name: 'sliding_card_carousel',
+    title: 'sliding_card_carousel',
+    description: 'A sliding card carousel with interactive pagination via PageView and Slider',
+    generatedAt: '2024-12-25T00:05:19.547356',
+    model: '',
+    complexityLevel: 'intermediate',
+    widget: SlidingCardCarousel(),
   ),
 ];
