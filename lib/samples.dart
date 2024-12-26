@@ -6,6 +6,7 @@ import '../samples/animated_icon_demo.dart';
 import '../samples/animated_multi_tile_list.dart';
 import '../samples/interactive_image_fade.dart';
 import '../samples/sliding_card_carousel.dart';
+import '../samples/responsive_sidebar_nav.dart';
 
 final samples = <Sample>[
   Sample(
@@ -52,5 +53,14 @@ final samples = <Sample>[
     model: '',
     complexityLevel: 'intermediate',
     widget: SlidingCardCarousel(),
+  ),
+  Sample(
+    name: 'responsive_sidebar_nav',
+    title: 'responsive_sidebar_nav',
+    description: 'A responsive sidebar navigation with animation',
+    generatedAt: '2024-12-26T00:05:22.521643',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: '',
+    widget: ResponsiveSidebarNav(),
   ),
 ];
