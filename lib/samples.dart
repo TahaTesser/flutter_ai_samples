@@ -7,6 +7,7 @@ import '../samples/animated_multi_tile_list.dart';
 import '../samples/interactive_image_fade.dart';
 import '../samples/sliding_card_carousel.dart';
 import '../samples/responsive_sidebar_nav.dart';
+import '../samples/expanding_card_sample.dart';
 
 final samples = <Sample>[
   Sample(
@@ -62,5 +63,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: '',
     widget: ResponsiveSidebarNav(),
+  ),
+  Sample(
+    name: 'expanding_card_sample',
+    title: 'expanding_card_sample',
+    description: 'An expandable card with animation and interactive button.',
+    generatedAt: '2024-12-27T00:05:19.948169',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: 'intermediate',
+    widget: ExpandingCardSample(),
   ),
 ];

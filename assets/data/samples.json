@@ -53,6 +53,15 @@
       "model": "claude-3-sonnet-20240229",
       "complexityLevel": null,
       "widgetName": "ResponsiveSidebarNav"
+    },
+    {
+      "name": "expanding_card_sample",
+      "title": "expanding_card_sample",
+      "description": "An expandable card with animation and interactive button.",
+      "generatedAt": "2024-12-27T00:05:19.948169",
+      "model": "claude-3-sonnet-20240229",
+      "complexityLevel": "intermediate",
+      "widgetName": "ExpandingCardSample"
     }
   ]
 }
