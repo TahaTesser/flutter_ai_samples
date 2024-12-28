@@ -62,6 +62,15 @@
       "model": "claude-3-sonnet-20240229",
       "complexityLevel": "intermediate",
       "widgetName": "ExpandingCardSample"
+    },
+    {
+      "name": "color_transition_sample",
+      "title": "color_transition_sample",
+      "description": "A sample showcasing color transition animation using AnimatedBuilder",
+      "generatedAt": "2024-12-28T00:05:23.903825",
+      "model": "claude-v1",
+      "complexityLevel": null,
+      "widgetName": "ColorTransitionSample"
     }
   ]
 }

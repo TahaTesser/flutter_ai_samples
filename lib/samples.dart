@@ -8,6 +8,7 @@ import '../samples/interactive_image_fade.dart';
 import '../samples/sliding_card_carousel.dart';
 import '../samples/responsive_sidebar_nav.dart';
 import '../samples/expanding_card_sample.dart';
+import '../samples/color_transition_sample.dart';
 
 final samples = <Sample>[
   Sample(
@@ -72,5 +73,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: 'intermediate',
     widget: ExpandingCardSample(),
+  ),
+  Sample(
+    name: 'color_transition_sample',
+    title: 'color_transition_sample',
+    description: 'A sample showcasing color transition animation using AnimatedBuilder',
+    generatedAt: '2024-12-28T00:05:23.903825',
+    model: 'claude-v1',
+    complexityLevel: '',
+    widget: ColorTransitionSample(),
   ),
 ];
