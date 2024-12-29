@@ -9,6 +9,7 @@ import '../samples/sliding_card_carousel.dart';
 import '../samples/responsive_sidebar_nav.dart';
 import '../samples/expanding_card_sample.dart';
 import '../samples/color_transition_sample.dart';
+import '../samples/live_clock_sample.dart';
 
 final samples = <Sample>[
   Sample(
@@ -82,5 +83,14 @@ final samples = <Sample>[
     model: 'claude-v1',
     complexityLevel: '',
     widget: ColorTransitionSample(),
+  ),
+  Sample(
+    name: 'live_clock_sample',
+    title: 'live_clock_sample',
+    description: 'A live clock widget that updates every second with a smooth animation',
+    generatedAt: '2024-12-29T00:06:03.779677',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: '',
+    widget: LiveClockSample(),
   ),
 ];

@@ -71,6 +71,15 @@
       "model": "claude-v1",
       "complexityLevel": null,
       "widgetName": "ColorTransitionSample"
+    },
+    {
+      "name": "live_clock_sample",
+      "title": "live_clock_sample",
+      "description": "A live clock widget that updates every second with a smooth animation",
+      "generatedAt": "2024-12-29T00:06:03.779677",
+      "model": "claude-3-sonnet-20240229",
+      "complexityLevel": null,
+      "widgetName": "LiveClockSample"
     }
   ]
 }
