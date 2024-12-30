@@ -10,6 +10,7 @@ import '../samples/responsive_sidebar_nav.dart';
 import '../samples/expanding_card_sample.dart';
 import '../samples/color_transition_sample.dart';
 import '../samples/live_clock_sample.dart';
+import '../samples/expanding_wave_animation.dart';
 
 final samples = <Sample>[
   Sample(
@@ -92,5 +93,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: '',
     widget: LiveClockSample(),
+  ),
+  Sample(
+    name: 'expanding_wave_animation',
+    title: 'expanding_wave_animation',
+    description: 'An expanding wave animation with a circular border',
+    generatedAt: '2024-12-30T00:05:24.248565',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: 'intermediate',
+    widget: ExpandingWaveAnimation(),
   ),
 ];
