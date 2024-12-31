@@ -89,6 +89,15 @@
       "model": "claude-3-sonnet-20240229",
       "complexityLevel": "intermediate",
       "widgetName": "ExpandingWaveAnimation"
+    },
+    {
+      "name": "animated_heart_beat",
+      "title": "animated_heart_beat",
+      "description": "An animated heart icon that beats on tap",
+      "generatedAt": "2024-12-31",
+      "model": "claude-3-sonnet-20240229",
+      "complexityLevel": "intermediate",
+      "widgetName": "AnimatedHeartBeat"
     }
   ]
 }

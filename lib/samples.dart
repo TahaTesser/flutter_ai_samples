@@ -11,6 +11,7 @@ import '../samples/expanding_card_sample.dart';
 import '../samples/color_transition_sample.dart';
 import '../samples/live_clock_sample.dart';
 import '../samples/expanding_wave_animation.dart';
+import '../samples/animated_heart_beat.dart';
 
 final samples = <Sample>[
   Sample(
@@ -102,5 +103,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: 'intermediate',
     widget: ExpandingWaveAnimation(),
+  ),
+  Sample(
+    name: 'animated_heart_beat',
+    title: 'animated_heart_beat',
+    description: 'An animated heart icon that beats on tap',
+    generatedAt: '2024-12-31',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: 'intermediate',
+    widget: AnimatedHeartBeat(),
   ),
 ];
