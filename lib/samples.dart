@@ -12,6 +12,7 @@ import '../samples/color_transition_sample.dart';
 import '../samples/live_clock_sample.dart';
 import '../samples/expanding_wave_animation.dart';
 import '../samples/animated_heart_beat.dart';
+import '../samples/restaurant_finder_app.dart';
 
 final samples = <Sample>[
   Sample(
@@ -112,5 +113,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: 'intermediate',
     widget: AnimatedHeartBeat(),
+  ),
+  Sample(
+    name: 'restaurant_finder_app',
+    title: 'restaurant_finder_app',
+    description: 'This Flutter sample demonstrates an app for finding restaurants. It includes an animated AppBar with a favorite icon, a search bar to filter the list of restaurants, and a list view displaying the restaurants. The favorite icon can be toggled to show or hide a favorite indicator next to each restaurant. The app utilizes state management to handle the search text, favorite status, and animation.',
+    generatedAt: '2024-12-31T16:24:25.929064',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: 'intermediate',
+    widget: RestaurantFinderApp(),
   ),
 ];
