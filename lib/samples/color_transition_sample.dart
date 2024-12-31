@@ -44,6 +44,9 @@ class _ColorTransitionSampleState extends State<ColorTransitionSample> with Tick
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Color Transition Sample'),
+      ),
       body: Center(
         child: AnimatedBuilder(
           animation: _colorAnimation,

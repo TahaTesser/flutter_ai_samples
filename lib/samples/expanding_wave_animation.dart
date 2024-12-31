@@ -41,17 +41,22 @@ class _ExpandingWaveAnimationState extends State<ExpandingWaveAnimation>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ScaleTransition(
-        scale: _animation,
-        child: Container(
-          width: 200,
-          height: 200,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.blue,
-              width: 2.0,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Expanding Wave Animation'),
+      ),
+      body: Center(
+        child: ScaleTransition(
+          scale: _animation,
+          child: Container(
+            width: 200,
+            height: 200,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.blue,
+                width: 2.0,
+              ),
             ),
           ),
         ),

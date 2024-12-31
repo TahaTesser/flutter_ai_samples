@@ -45,66 +45,71 @@ class _ResponsiveSidebarNavState extends State<ResponsiveSidebarNav>
     final screenWidth = MediaQuery.of(context).size.width;
     final isExpanded = screenWidth > 600;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      width: isExpanded ? 200 : 80,
-      child: Drawer(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _isExpanded = !_isExpanded;
-                    _isExpanded
-                        ? _animationController.forward()
-                        : _animationController.reverse();
-                  });
-                },
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  color: Colors.blue,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                      SizeTransition(
-                        sizeFactor: _animation,
-                        axis: Axis.horizontal,
-                        child: const Text(
-                          'Menu',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Responsive Sidebar Nav'),
+      ),
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        width: isExpanded ? 200 : 80,
+        child: Drawer(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isExpanded = !_isExpanded;
+                      _isExpanded
+                          ? _animationController.forward()
+                          : _animationController.reverse();
+                    });
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    color: Colors.blue,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.menu,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                        SizeTransition(
+                          sizeFactor: _animation,
+                          axis: Axis.horizontal,
+                          child: const Text(
+                            'Menu',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 16),
-              SizeTransition(
-                sizeFactor: _animation,
-                axis: Axis.horizontal,
-                child: const NavItem(icon: Icons.home, label: 'Home'),
-              ),
-              SizeTransition(
-                sizeFactor: _animation,
-                axis: Axis.horizontal,
-                child: const NavItem(icon: Icons.settings, label: 'Settings'),
-              ),
-              SizeTransition(
-                sizeFactor: _animation,
-                axis: Axis.horizontal,
-                child: const NavItem(icon: Icons.help, label: 'Help'),
-              ),
-            ],
+                SizedBox(height: 16),
+                SizeTransition(
+                  sizeFactor: _animation,
+                  axis: Axis.horizontal,
+                  child: const NavItem(icon: Icons.home, label: 'Home'),
+                ),
+                SizeTransition(
+                  sizeFactor: _animation,
+                  axis: Axis.horizontal,
+                  child: const NavItem(icon: Icons.settings, label: 'Settings'),
+                ),
+                SizeTransition(
+                  sizeFactor: _animation,
+                  axis: Axis.horizontal,
+                  child: const NavItem(icon: Icons.help, label: 'Help'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

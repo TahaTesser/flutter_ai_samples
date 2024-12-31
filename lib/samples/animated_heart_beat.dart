@@ -43,18 +43,23 @@ class _AnimatedHeartBeatState extends State<AnimatedHeartBeat>
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ScaleTransition(
-        scale: _animation,
-        child: GestureDetector(
-          onTap: () {
-            _controller.reset();
-            _controller.forward();
-          },
-          child: Icon(
-            Icons.favorite,
-            color: Colors.red,
-            size: 100.0,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Animated Heart Beat'),
+      ),
+      body: Center(
+        child: ScaleTransition(
+          scale: _animation,
+          child: GestureDetector(
+            onTap: () {
+              _controller.reset();
+              _controller.forward();
+            },
+            child: Icon(
+              Icons.favorite,
+              color: Colors.red,
+              size: 100.0,
+            ),
           ),
         ),
       ),

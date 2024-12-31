@@ -41,41 +41,46 @@ class _ExpandingCardSampleState extends State<ExpandingCardSample> with SingleTi
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: AnimatedSize(
-        curve: Curves.easeInOut,
-        duration: const Duration(milliseconds: 500),
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  _isExpanded = !_isExpanded;
-                  _isExpanded ? _controller.forward() : _controller.reverse();
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text('Expanding Card'),
-                    Icon(Icons.expand_more),
-                  ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Expanding Card Sample'),
+      ),
+      body: Card(
+        child: AnimatedSize(
+          curve: Curves.easeInOut,
+          duration: const Duration(milliseconds: 500),
+          child: Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _isExpanded = !_isExpanded;
+                    _isExpanded ? _controller.forward() : _controller.reverse();
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [
+                      Text('Expanding Card'),
+                      Icon(Icons.expand_more),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            SizeTransition(
-              axisAlignment: -1.0,
-              sizeFactor: _animation,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(_isExpanded
-                    ? 'This is an expanded card with additional content.'
-                    : ''),
+              SizeTransition(
+                axisAlignment: -1.0,
+                sizeFactor: _animation,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(_isExpanded
+                      ? 'This is an expanded card with additional content.'
+                      : ''),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

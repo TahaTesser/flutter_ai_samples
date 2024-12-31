@@ -42,30 +42,35 @@ class _InteractiveImageFadeState extends State<InteractiveImageFade>
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) {
-        setState(() {
-          _isHovered = true;
-          _controller.forward();
-        });
-      },
-      onExit: (_) {
-        setState(() {
-          _isHovered = false;
-          _controller.reverse();
-        });
-      },
-      child: AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) {
-          return Opacity(
-            opacity: _animation.value,
-            child: Image.network(
-              'https://picsum.photos/400/300',
-              fit: BoxFit.cover,
-            ),
-          );
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Interactive Image Fade'),
+      ),
+      body: MouseRegion(
+        onEnter: (_) {
+          setState(() {
+            _isHovered = true;
+            _controller.forward();
+          });
         },
+        onExit: (_) {
+          setState(() {
+            _isHovered = false;
+            _controller.reverse();
+          });
+        },
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _animation.value,
+              child: Image.network(
+                'https://picsum.photos/400/300',
+                fit: BoxFit.cover,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

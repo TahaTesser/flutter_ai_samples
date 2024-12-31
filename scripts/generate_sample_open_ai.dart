@@ -37,30 +37,39 @@ Future<Map<String, dynamic>> generateSample(String apiKey) async {
         'messages': [
           {
             'role': 'user',
-            'content': '''Generate a flutter showcase single sample, try to complex yet simple and use different combinations of widgets, Flutter implementations and patterns. The widget must be entirely self-contained (no external parameters or dependencies) and showcase at least one interactive or animated element.
+            'content': '''Generate a Flutter showcase sample that demonstrates a real-world app use case. Create a rich, well-structured widget that combines multiple Flutter widgets and patterns into a cohesive user interface. The sample should be complex enough to be meaningful yet maintainable.
 
 Requirements:
 1. Respond ONLY with a single valid JSON object – no extra text, explanations, or code comments.
 2. The JSON must include exactly these keys: "name", "code", and "metadata".
-3. The "name" field should use snake_case for the widget’s class name (e.g., "my_cool_sample").
+3. The "name" field should use snake_case for the widget's class name (e.g., "task_management_card").
 4. The "code" field must:
    - Contain a fully self-contained Flutter code snippet in a properly escaped string.
    - Include ALL necessary imports (e.g., material.dart).
-   - Use a constructor with no required parameters (e.g., `const MyCoolSample({super.key});`).
-   - Feature at least one interactive or animated element.
-5. The "metadata" field can include any relevant details or categorization (e.g., "interactive", "animation"), but keep it concise.
-6. Ensure all quotes and special characters are properly escaped so the JSON is valid.
-7. Provide no additional commentary, instructions, or text outside of the single JSON object.
+   - Use a constructor with no required parameters (e.g., `const TaskManagementCard({super.key});`).
+   - MUST include an AppBar with the sample's title.
+   - Feature multiple interactive or animated elements.
+   - Demonstrate practical widget composition and real-world patterns.
+   - Include meaningful state management.
+   - Consider including common app patterns like lists, forms, cards, or data display.
+5. The "metadata" field should include:
+   - Detailed description of the sample's purpose and features
+   - List of key Flutter concepts demonstrated
+   - Complexity level (beginner/intermediate/advanced)
+   - Categories (e.g., "real-world", "interactive", "animation", "forms")
+6. Ensure all quotes and special characters are properly escaped for valid JSON.
+7. Provide no additional commentary outside the JSON object.
 
 Example response format (respond exactly like this format):
 {
   "name": "widget_name",
   "code": "import 'package:flutter/material.dart';\\n\\n// Rest of the dart code here",
   "metadata": {
-    "description": "A brief description",
+    "description": "A detailed description",
+    "concepts": ["state management", "animations", "forms"],
     "generated_at": "$today",
     "model": "o1-preview-2024-09-12",
-    "complexity_level": "beginner"
+    "complexity_level": "intermediate"
   }
 }'''
           }

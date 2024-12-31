@@ -45,7 +45,7 @@ class _LiveClockSampleState extends State<LiveClockSample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Live Clock'),
+        title: const Text('Live Clock Sample'),
       ),
       body: Center(
         child: Column(
