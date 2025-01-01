@@ -13,6 +13,7 @@ import '../samples/live_clock_sample.dart';
 import '../samples/expanding_wave_animation.dart';
 import '../samples/animated_heart_beat.dart';
 import '../samples/restaurant_finder_app.dart';
+import '../samples/task_management_card.dart';
 
 final samples = <Sample>[
   Sample(
@@ -122,5 +123,14 @@ final samples = <Sample>[
     model: 'claude-3-sonnet-20240229',
     complexityLevel: 'intermediate',
     widget: RestaurantFinderApp(),
+  ),
+  Sample(
+    name: 'task_management_card',
+    title: 'task_management_card',
+    description: 'This sample demonstrates a task management card with a list view, form input, and animations. Users can view tasks, toggle their completion status, and add new tasks with an animated form. The sample showcases state management, animations, forms, and list views in a practical and interactive way.',
+    generatedAt: '2025-01-01T00:06:04.426854',
+    model: 'claude-3-sonnet-20240229',
+    complexityLevel: 'intermediate',
+    widget: TaskManagementCard(),
   ),
 ];
