@@ -111,8 +111,8 @@
     {
       "name": "task_management_card",
       "title": "task_management_card",
-      "description": "This sample demonstrates a task management card with a list view, form input, and animations. Users can view tasks, toggle their completion status, and add new tasks with an animated form. The sample showcases state management, animations, forms, and list views in a practical and interactive way.",
-      "generatedAt": "2025-01-01T00:06:04.426854",
+      "description": "This sample demonstrates a task management app with a card-based UI. Users can view a list of tasks, mark them as completed or incomplete, delete tasks, and add new tasks. The app features animations, state management, interactive elements (checkboxes, text fields), and common UI patterns like cards and lists.",
+      "generatedAt": "2025-01-02T00:05:30.577817",
       "model": "claude-3-sonnet-20240229",
       "complexityLevel": "intermediate",
       "widgetName": "TaskManagementCard"
