@@ -1,14 +1,14 @@
-// Generated on: 2025-01-02T00:05:30.577817
-// Model: claude-3-sonnet-20240229
-// Description: This sample demonstrates a task management app with a card-based UI. Users can view a list of tasks, mark them as completed or incomplete, delete tasks, and add new tasks. The app features animations, state management, interactive elements (checkboxes, text fields), and common UI patterns like cards and lists.
+// Generated on: 2025-01-03T00:05:26.272952
+// Model: claude-v1
+// Description: A task management card that allows users to add, remove, and toggle completion of tasks. It demonstrates state management, animations, forms, and lists in a real-world scenario.
 // Complexity level: intermediate
 
 import 'package:flutter/material.dart';
 
 class TaskManagementCard extends StatefulWidget {
-  static final String generatedAt = '2025-01-02T00:05:30.577817';
-  static final String model = 'claude-3-sonnet-20240229';
-  static final String description = 'This sample demonstrates a task management app with a card-based UI. Users can view a list of tasks, mark them as completed or incomplete, delete tasks, and add new tasks. The app features animations, state management, interactive elements (checkboxes, text fields), and common UI patterns like cards and lists.';
+  static final String generatedAt = '2025-01-03T00:05:26.272952';
+  static final String model = 'claude-v1';
+  static final String description = 'A task management card that allows users to add, remove, and toggle completion of tasks. It demonstrates state management, animations, forms, and lists in a real-world scenario.';
   static final String complexityLevel = 'intermediate';
 
 
@@ -19,121 +19,116 @@ class TaskManagementCard extends StatefulWidget {
 }
 
 class _TaskManagementCardState extends State<TaskManagementCard> with SingleTickerProviderStateMixin {
-  final List<Map<String, dynamic>> _tasks = [
-    {'title': 'Buy Groceries', 'completed': false},
-    {'title': 'Clean the House', 'completed': true},
-    {'title': 'Finish Project Report', 'completed': false},
-  ];
-
-  bool _isEditing = false;
-  late final AnimationController _animationController;
-  late final Animation<double> _opacityAnimation;
+  final List<String> _tasks = [];
+  final TextEditingController _taskController = TextEditingController();
+  bool _showCompleted = false;
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
       vsync: this,
+      duration: const Duration(milliseconds: 500),
     );
-    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
   }
 
   @override
   void dispose() {
+    _taskController.dispose();
     _animationController.dispose();
     super.dispose();
   }
 
-  void _toggleEditing() {
-    setState(() {
-      _isEditing = !_isEditing;
-      if (_isEditing) {
+  void _addTask() {
+    if (_taskController.text.isNotEmpty) {
+      setState(() {
+        _tasks.add(_taskController.text);
+        _taskController.clear();
         _animationController.forward();
-      } else {
-        _animationController.reverse();
-      }
-    });
+      });
+    }
   }
 
-  void _toggleTaskCompletion(int index) {
-    setState(() {
-      _tasks[index]['completed'] = !_tasks[index]['completed'];
-    });
-  }
-
-  void _deleteTask(int index) {
+  void _removeTask(int index) {
     setState(() {
       _tasks.removeAt(index);
+      _animationController.reverse();
     });
   }
 
-  void _addTask(String title) {
+  void _toggleCompleted() {
     setState(() {
-      _tasks.add({'title': title, 'completed': false});
+      _showCompleted = !_showCompleted;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Task Management'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: _tasks.length,
-              itemBuilder: (context, index) {
-                final task = _tasks[index];
-                return Card(
-                  child: ListTile(
-                    leading: Checkbox(
-                      value: task['completed'],
-                      onChanged: (value) {
-                        _toggleTaskCompletion(index);
-                      },
-                    ),
-                    title: Text(
-                      task['title'],
-                      style: TextStyle(
-                        decoration: task['completed'] ? TextDecoration.lineThrough : null,
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Task Management'),
+        ),
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _taskController,
+                      decoration: const InputDecoration(
+                        hintText: 'Enter a task',
                       ),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        _deleteTask(index);
-                      },
-                    ),
                   ),
-                );
-              },
-            ),
-          ),
-          FadeTransition(
-            opacity: _opacityAnimation,
-            child: Container(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                onSubmitted: (value) {
-                  _addTask(value);
-                  FocusScope.of(context).requestFocus(FocusNode());
-                },
-                decoration: const InputDecoration(
-                  hintText: 'Add a task',
-                  border: OutlineInputBorder(),
-                ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: _addTask,
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _toggleEditing,
-        tooltip: _isEditing ? 'Save' : 'Add Task',
-        child: Icon(_isEditing ? Icons.save : Icons.add),
+            FadeTransition(
+              opacity: _animation,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('Show Completed'),
+                  Switch(
+                    value: _showCompleted,
+                    onChanged: (value) {
+                      _toggleCompleted();
+                    },
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _tasks.length,
+                itemBuilder: (context, index) {
+                  if (_showCompleted || !_tasks[index].contains('â')) {
+                    return Dismissible(
+                      key: Key(_tasks[index]),
+                      onDismissed: (_) {
+                        _removeTask(index);
+                      },
+                      child: ListTile(
+                        title: Text(_tasks[index]),
+                      ),
+                    );
+                  }
+                  return Container();
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

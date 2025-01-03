@@ -127,9 +127,9 @@ final samples = <Sample>[
   Sample(
     name: 'task_management_card',
     title: 'task_management_card',
-    description: 'This sample demonstrates a task management app with a card-based UI. Users can view a list of tasks, mark them as completed or incomplete, delete tasks, and add new tasks. The app features animations, state management, interactive elements (checkboxes, text fields), and common UI patterns like cards and lists.',
-    generatedAt: '2025-01-02T00:05:30.577817',
-    model: 'claude-3-sonnet-20240229',
+    description: 'A task management card that allows users to add, remove, and toggle completion of tasks. It demonstrates state management, animations, forms, and lists in a real-world scenario.',
+    generatedAt: '2025-01-03T00:05:26.272952',
+    model: 'claude-v1',
     complexityLevel: 'intermediate',
     widget: TaskManagementCard(),
   ),
