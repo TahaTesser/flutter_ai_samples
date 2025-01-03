@@ -46,7 +46,8 @@ jobs:
       env:
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       run: |
-        PROMPT=$(cat << 'EOL'
+        # Create the prompt in a more shell-safe way
+        cat > prompt.txt << 'EOL'
         You are tasked with creating a unique and useful self-contained Flutter sample that demonstrates a specific Flutter concept. This sample should be comprehensive, runnable, and resemble a real-world use case. Follow these instructions carefully:
 
         1. The Flutter concept you will be demonstrating is:
@@ -76,18 +77,20 @@ jobs:
 
         Remember to make the sample unique, practical, and focused on demonstrating the specified Flutter concept in a way that resembles a real use case.
         EOL
-        )
 
-        # Store the response in a file first
+        # Read the prompt and escape it properly for JSON
+        ESCAPED_PROMPT=$(cat prompt.txt | jq -Rs .)
+
+        # Make the API call with properly escaped JSON
         curl https://api.anthropic.com/v1/messages \
           -H "x-api-key: $ANTHROPIC_API_KEY" \
           -H "anthropic-version: 2024-01-01" \
           -H "content-type: application/json" \
-          -d '{
-            "model": "claude-3-sonnet-20240229",
-            "max_tokens": 4096,
-            "messages": [{"role": "user", "content": "'"${PROMPT//$'\n'/\\n}"'"}]
-          }' > response.json
+          -d "{
+            \"model\": \"claude-3-sonnet-20240229\",
+            \"max_tokens\": 4096,
+            \"messages\": [{\"role\": \"user\", \"content\": ${ESCAPED_PROMPT}}]
+          }" > response.json
 
         # Extract the content and save it properly, handling multiline content
         jq -r '.content[0].text' response.json | \
@@ -96,7 +99,7 @@ jobs:
         grep -v '</flutter_sample>' > "samples/flutter_sample_${{ steps.date.outputs.date }}.dart"
 
         # Clean up
-        rm response.json
+        rm response.json prompt.txt
 
     - name: Commit and push if there are changes
       run: |
