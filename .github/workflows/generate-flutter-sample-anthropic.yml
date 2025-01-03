@@ -28,7 +28,7 @@ jobs:
       run: echo "ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY" >> $GITHUB_ENV
         
     - name: Run sample generation script
-      run: python scripts/anthropic.py
+      run: python scripts/generate_sample_anthropic.py
       
     - name: Commit and push if changes exist
       run: |
