@@ -4,7 +4,7 @@ A collection of Flutter samples that are automatically generated using AI (Anthr
 
 ### List of Samples
 
-Check out the [samples](./samples) directory.
+Check out the [samples](./samples) directory. Copy the code and run it in your Flutter project or on [dartpad.dev](https://dartpad.dev).
 
 ## License
 
