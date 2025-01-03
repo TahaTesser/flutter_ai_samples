@@ -1,4 +1,4 @@
-from anthropic import Anthropic
+import anthropic
 import os
 from datetime import datetime
 
@@ -6,7 +6,7 @@ from datetime import datetime
 samples_dir = "samples"
 os.makedirs(samples_dir, exist_ok=True)
 
-client = Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
 
 # Get today's date in YYYYMMDD format
 today = datetime.now().strftime("%Y%m%d")
