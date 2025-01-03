@@ -1,0 +1,99 @@
+name: Generate Flutter Sample with Claude
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every day
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  generate-sample:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Get current date
+      id: date
+      run: echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+      
+    - name: Set Flutter concept
+      id: concept
+      run: |
+        CONCEPTS=(
+          "Animations and transitions"
+          "State management with Provider"
+          "Custom painters and canvas"
+          "Gesture detection and handling"
+          "Form validation and input handling"
+          "Navigation and routing"
+          "Custom widgets and inheritance"
+          "Layout and constraints"
+          "Theming and styling"
+          "Platform-specific code integration"
+        )
+        if [ "${{ github.event.inputs.flutter_concept }}" != "" ]; then
+          echo "concept=${{ github.event.inputs.flutter_concept }}" >> $GITHUB_OUTPUT
+        else
+          RANDOM_CONCEPT=${CONCEPTS[$RANDOM % ${#CONCEPTS[@]}]}
+          echo "concept=$RANDOM_CONCEPT" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Create samples directory
+      run: mkdir -p samples
+
+    - name: Generate Flutter sample using Claude
+      env:
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      run: |
+        PROMPT=$(cat << 'EOL'
+        You are tasked with creating a unique and useful self-contained Flutter sample that demonstrates a specific Flutter concept. This sample should be comprehensive, runnable, and resemble a real-world use case. Follow these instructions carefully:
+
+        1. The Flutter concept you will be demonstrating is:
+        <flutter_concept>
+        ${{ steps.concept.outputs.concept }}
+        </flutter_concept>
+
+        2. Create a single Dart file that includes all necessary code, including the main function, to make the sample runnable. The file should be placed in a "samples" folder and named according to this convention:
+           flutter_sample_${{ steps.date.outputs.date }}.dart
+
+        3. Ensure your sample incorporates and showcases the Flutter concept mentioned above in a practical and meaningful way.
+
+        4. Structure your sample to include:
+           a. Necessary import statements
+           b. A main() function that runs the app
+           c. At least one custom StatefulWidget or StatelessWidget class
+           d. Implementation of the specified Flutter concept
+           e. If applicable, multiple pages or screens to demonstrate navigation
+
+        5. Your code should be well-formatted and include comments explaining key parts of the implementation, especially those related to the specified Flutter concept.
+
+        6. Make sure the sample is self-contained and doesn't rely on external assets or packages that are not part of the standard Flutter framework.
+
+        7. The sample should be between 100-300 lines of code, striking a balance between being comprehensive and manageable.
+
+        When you're ready to provide the sample, please output your entire response within <flutter_sample> tags. Begin with a brief description of what the sample demonstrates, followed by the complete Dart code.
+
+        Remember to make the sample unique, practical, and focused on demonstrating the specified Flutter concept in a way that resembles a real use case.
+        EOL
+        )
+
+        response=$(curl https://api.anthropic.com/v1/messages \
+          -H "x-api-key: $ANTHROPIC_API_KEY" \
+          -H "anthropic-version: 2024-01-01" \
+          -H "content-type: application/json" \
+          -d '{
+            "model": "claude-3-sonnet-20240229",
+            "max_tokens": 4096,
+            "messages": [{"role": "user", "content": "'"${PROMPT//$'\n'/\\n}"'"}]
+          }')
+
+        echo "$response" | jq -r '.content[0].text' | sed -n '/<flutter_sample>/,/<\/flutter_sample>/p' > "samples/flutter_sample_${{ steps.date.outputs.date }}.dart"
+
+    - name: Commit and push if there are changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add samples/
+        git commit -m "Add Flutter sample for ${{ steps.concept.outputs.concept }}" || exit 0
+        git push
