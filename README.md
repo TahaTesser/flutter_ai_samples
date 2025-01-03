@@ -1,10 +1,10 @@
 # Flutter AI Samples
 
-A collection of Flutter samples that are automatically generated using AI (Anthropic Claude and OpenAI). The samples are refreshed daily to showcase different Flutter implementations and patterns.
+A collection of Flutter samples that are automatically generated using AI (Anthropic Claude 3.5 Sonnet). The samples are refreshed daily to showcase different Flutter implementations and patterns.
 
 ### List of Samples
 
-Check out the [samples](./lib/samples) directory for the latest list of samples.
+Check out the [samples](./samples) directory.
 
 ## License
 
